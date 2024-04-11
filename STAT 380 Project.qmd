@@ -32,8 +32,7 @@ names(data3)[names(data3) == "winning_team"] <- "Country"
 
 first_join <- left_join(data2, data1, by = "Country")
 
-second_join <- left_join(data2, data3, by = "Country")
-
+second_join <- left_join(first_join, data3, by = "Country")
 
 
 ```
@@ -43,11 +42,59 @@ second_join <- left_join(data2, data3, by = "Country")
 
 A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
 ```{r}
+library(dplyr)
+library(ggplot2)
 
+# Filter matches where the home team won
+home_wins <- filter(second_join, outcome == "H")
 
+# Filter matches where the away team won
+away_wins <- filter(second_join, outcome == "A")
+
+# Combine the home and away wins
+all_wins <- bind_rows(home_wins, away_wins)
+
+# Aggregate the data to count the number of wins for each country
+world_cup_wins <- all_wins %>%
+  group_by(Country) %>%
+  summarise(Wins = n())
+
+# Sort the data by the number of wins in descending order
+world_cup_wins <- world_cup_wins[order(-world_cup_wins$Wins),]
+
+# Create the bar plot
+ggplot(world_cup_wins, aes(x = reorder(Country, Wins), y = Wins)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "FIFA World Cup Winners (1930-2018)",
+       x = "Country",
+       y = "Number of Wins") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+```{r}
+library(dplyr)
+library(ggplot2)
 
+# Filter Brazil's rank data
+brazil_rank <- filter(data1, Country == "Brazil")
+
+# Extract the year from the rank_date column
+brazil_rank$year <- substr(brazil_rank$rank_date, 1, 4)
+
+# Convert year to numeric
+brazil_rank$year <- as.integer(brazil_rank$year)
+
+# Create the line plot
+ggplot(brazil_rank, aes(x = year, y = total_points)) +
+  geom_line(color = "skyblue") +
+  geom_point(color = "skyblue", size = 3) +
+  labs(title = "Brazil's FIFA World Cup Rank Over the Years",
+       x = "Year",
+       y = "Total Points") +
+  theme_minimal()
+
+```
 ## Background & Related Work (2 points)
 
 A description of 1-2 related work in the field, to provide reader a sense of what has already been done in this area, e.g. papers or existing products/software that do a related thing.
