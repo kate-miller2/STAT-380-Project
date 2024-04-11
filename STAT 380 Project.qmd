@@ -12,13 +12,29 @@ A brief description of the motivations behind your project, the goal of your pro
 ## Exploratory Data Analysis
 
 ```{R, echo = TRUE, warning = FALSE}
-
+library(dplyr)
+library(tidyverse)
 library(readr)
+
 data1 <- read.csv("fifa_ranking-2023-07-20.csv")
 
 data2 <- read.csv("worldcups.csv")
 
 data3 <- read.csv("wcmatches.csv")
+
+# Use columns from data 3: Home score and away score
+# Use columns from data 1: Rank
+# Add these columns to data 2
+
+names(data1)[names(data1) == "country_full"] <- "Country"
+names(data2)[names(data2) == "winner"] <- "Country"
+names(data3)[names(data3) == "winning_team"] <- "Country"
+
+first_join <- left_join(data2, data1, by = "Country")
+
+second_join <- left_join(data2, data3, by = "Country")
+
+
 
 ```
 
