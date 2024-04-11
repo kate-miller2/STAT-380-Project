@@ -1,6 +1,6 @@
 ---
 title: "Predicting the Winner of the 2026 Men's FIFA World Cup"
-author: "Diana Batiste Capellan, Kate Miller, Isabel Sumy"
+author: "Diana Batista Capellan, Kate Miller, Isabel Sumy"
 format: pdf
 editor: visual
 ---
@@ -26,7 +26,11 @@ data3 <- read.csv("wcmatches.csv")
 ## Illustration / Figure
 
 A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
+```{r}
 
+
+
+```
 
 ## Background & Related Work (2 points)
 
