@@ -12,12 +12,13 @@ A brief description of the motivations behind your project, the goal of your pro
 ## Exploratory Data Analysis
 
 ```{R, echo = TRUE, warning = FALSE}
-library(rvest)
-url <- "https://inside.fifa.com/fifa-world-ranking/men?dateId=id14289"
-page <- read_html(url)
 
 library(readr)
-data <- read_csv("")
+data1 <- read.csv("fifa_ranking-2023-07-20.csv")
+
+data2 <- read.csv("worldcups.csv")
+
+data3 <- read.csv("wcmatches.csv")
 
 ```
 
