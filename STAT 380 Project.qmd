@@ -1,26 +1,67 @@
 ---
-title: "STAT 380 Project"
+title: "Predicting the Winner of the 2026 Men's FIFA World Cup"
+author: "Diana Batiste Capellan, Kate Miller, Isabel Sumy"
 format: pdf
 editor: visual
 ---
 
-## Quarto
+## Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+A brief description of the motivations behind your project, the goal of your project, why it is interesting or important, and why machine learning is a reasonable approach.
 
-## Running Code
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Illustration / Figure
 
-```{r}
-1 + 1
-```
+A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
 
-You can add options to executable code like this
 
-```{r}
-#| echo: false
-2 * 2
-```
+## Background & Related Work (2 points)
 
-The `echo: false` option disables the printing of code (only output is displayed).
+A description of 1-2 related work in the field, to provide reader a sense of what has already been done in this area, e.g. papers or existing products/software that do a related thing.
+
+-   2/2 Briefly describes 1-2 prior work related to your project to put your project into context. Your descriptions need not be complete, but should contain important work
+-   1/2 Background that has omissions or factual incorrectness, but otherwise places your project into context.
+-   0/1 Background contains too much information not related to your project, or has major omissions of content provided to you by your instructor or TA., or does not sufficiently put your project into context.
+
+## Data Processing
+
+Describe the data that you have collected and cleaned. Be clear and specific when describing what you've done, so that a classmate can reproduce your work. Show some statistics and examples of your data.
+
+-   4/4 Clearly describes sources of data, and the steps you took to clean and format your data. Statistics and data example are well-chosen, and gives readers a "feel" for your data.
+-   3/4 Mostly clear description, but some aspects of the data processing steps are vague. Statistics and data example are somewhat illustrative/helpful.
+-   2/4 Vague description or missing key information about where your data comes from or what you did. No example data shown, or the ones shown are not illustrative.
+-   1/4 Incomplete information.
+
+## Architecture
+
+A description of the final model. Do not describe all the intermediate models that you have tried. Instead, present the model (or models) whose quantitative results you will show. These should be your most interesting models. Be as specific as you can while being concise. Readers should be able to reproduce a model similar enough to yours and obtain a similar performance.
+
+## Baseline Model
+
+Describe a simple, baseline model that you will compare your neural network against. This can be a simple model that you build.
+
+
+## Quantitative Results
+
+A description of the quantitative measures of your result. What measurements can you use to illustrate how your model performs?
+
+
+## Qualitative Results
+
+Include some sample outputs of your model, to help your readers better understand what your model can do. The qualitative results should also put your quantitative results into context (e.g. Why did your model perform well? Is there a type of input that the model does not do well on?)
+
+
+## Discussion
+
+Discuss your results. Do you think your model is performing well? Why or why not? What is unusual, surprising, or interesting about your results? What did you learn?
+
+## Ethical Considerations
+
+Description of a use of the system that could give rise to ethical issues. Are there limitations of your model? Your training data?
+
+(Note that the expectations are higher here than in the project proposal.)
+
+
+## Conclusion(Optional)
+
+Summarize the whole report.
