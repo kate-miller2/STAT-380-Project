@@ -9,6 +9,18 @@ editor: visual
 
 A brief description of the motivations behind your project, the goal of your project, why it is interesting or important, and why machine learning is a reasonable approach.
 
+## Exploratory Data Analysis
+
+```{R, echo = TRUE, warning = FALSE}
+library(rvest)
+url <- "https://inside.fifa.com/fifa-world-ranking/men?dateId=id14289"
+page <- read_html(url)
+
+library(readr)
+data <- read_csv("")
+
+```
+
 
 ## Illustration / Figure
 
