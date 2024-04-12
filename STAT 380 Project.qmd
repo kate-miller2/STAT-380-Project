@@ -37,10 +37,10 @@ second_join <- left_join(first_join, data3, by = "Country")
 
 ```
 
-
 ## Illustration / Figure
 
 A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
+
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -72,6 +72,7 @@ ggplot(world_cup_wins, aes(x = reorder(Country, Wins), y = Wins)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -95,6 +96,7 @@ ggplot(brazil_rank, aes(x = year, y = total_points)) +
   theme_minimal()
 
 ```
+
 ## Background & Related Work (2 points)
 
 A description of 1-2 related work in the field, to provide reader a sense of what has already been done in this area, e.g. papers or existing products/software that do a related thing.
@@ -120,16 +122,13 @@ A description of the final model. Do not describe all the intermediate models th
 
 Describe a simple, baseline model that you will compare your neural network against. This can be a simple model that you build.
 
-
 ## Quantitative Results
 
 A description of the quantitative measures of your result. What measurements can you use to illustrate how your model performs?
 
-
 ## Qualitative Results
 
 Include some sample outputs of your model, to help your readers better understand what your model can do. The qualitative results should also put your quantitative results into context (e.g. Why did your model perform well? Is there a type of input that the model does not do well on?)
-
 
 ## Discussion
 
@@ -140,7 +139,6 @@ Discuss your results. Do you think your model is performing well? Why or why not
 Description of a use of the system that could give rise to ethical issues. Are there limitations of your model? Your training data?
 
 (Note that the expectations are higher here than in the project proposal.)
-
 
 ## Conclusion(Optional)
 
