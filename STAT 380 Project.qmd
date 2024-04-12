@@ -7,7 +7,7 @@ editor: visual
 
 ## Introduction
 
-A brief description of the motivations behind your project, the goal of your project, why it is interesting or important, and why machine learning is a reasonable approach.
+The Fifa World Cup is an international competition like no other. In 2022, 1.5 billion people tuned in to watch the games and 88,966 were there live in Qatar. With an event of this size, fans go all out in support of their favorite team(s), but how do we know who will end up as the champion? With this project, we will use machine learning and our knowledge of data science to answer this question. We plan to predict the outcome of the next men’s soccer World Cup (2026) by using the previous year’s team ranks from 1992 to 2023 and the outcomes of past games from 1930 to 2018.
 
 ## Exploratory Data Analysis
 
@@ -37,10 +37,8 @@ second_join <- left_join(first_join, data3, by = "Country")
 
 ```
 
-
 ## Illustration / Figure
 
-A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -72,6 +70,7 @@ ggplot(world_cup_wins, aes(x = reorder(Country, Wins), y = Wins)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -95,13 +94,14 @@ ggplot(brazil_rank, aes(x = year, y = total_points)) +
   theme_minimal()
 
 ```
+
 ## Background & Related Work (2 points)
 
-A description of 1-2 related work in the field, to provide reader a sense of what has already been done in this area, e.g. papers or existing products/software that do a related thing.
+With an event as big as the Fifa World Cup, many people have tried to determine who will win the next Cup for years. People will develop brackets and make bets with their friends, or for money, about who will win it all. Many times people simply go off their intuition but those with experience in data science and machine learning have gone on to develop models similar to ours to predict the next winning team. Each model utilizes different datasets and features to determine who will win the upcoming cup as well as different programming languages and visualizations to produce and showcase their work.
 
--   2/2 Briefly describes 1-2 prior work related to your project to put your project into context. Your descriptions need not be complete, but should contain important work
--   1/2 Background that has omissions or factual incorrectness, but otherwise places your project into context.
--   0/1 Background contains too much information not related to your project, or has major omissions of content provided to you by your instructor or TA., or does not sufficiently put your project into context.
+For example, from ProjectPro there is an article depicting ways machine learning was utilized in Fifa 2022 and includes a project which tries to predict the outcome of the 2022 games using the results from 1870 to 2018. The article sets up a competition through Kaggle where teams or individuals can compete to produce the best model for predicting the winning teams. This is similar to what we wish to do in this project although we will be using different data sets and doing our work using R instead of Python like the competition suggests. Another example of similar work is outlined in a Medium article about predicting the 2022 Fifa World Cup. The article goes into which features they found to be important in predicting the next winner and trying to simulate the results. Once the features from their datasets were found, they were used to create different machine-learning models that take in team aspects to determine whether or not they could win the World Cup. Our project will be similar to this one as well but will use different data and work to predict the final winner of the competition based on existing teams.
+
+Overall, there are other projects out there that attempt to accomplish the same goal as ours, meaning that it is possible. Although these projects exist, ours will differ in the data used and therefore also differ in which features are important for our particular models.
 
 ## Data Processing
 
@@ -120,16 +120,13 @@ A description of the final model. Do not describe all the intermediate models th
 
 Describe a simple, baseline model that you will compare your neural network against. This can be a simple model that you build.
 
-
 ## Quantitative Results
 
 A description of the quantitative measures of your result. What measurements can you use to illustrate how your model performs?
 
-
 ## Qualitative Results
 
 Include some sample outputs of your model, to help your readers better understand what your model can do. The qualitative results should also put your quantitative results into context (e.g. Why did your model perform well? Is there a type of input that the model does not do well on?)
-
 
 ## Discussion
 
@@ -140,7 +137,6 @@ Discuss your results. Do you think your model is performing well? Why or why not
 Description of a use of the system that could give rise to ethical issues. Are there limitations of your model? Your training data?
 
 (Note that the expectations are higher here than in the project proposal.)
-
 
 ## Conclusion(Optional)
 
