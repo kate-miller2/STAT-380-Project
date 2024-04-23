@@ -114,6 +114,53 @@ Describe the data that you have collected and cleaned. Be clear and specific whe
 
 ## Architecture
 
+
+```{R, echo = FALSE, warning = FALSE}
+library(glmnet)
+
+# Prepare the data for regression
+# For simplicity, let's assume we're predicting World Cup wins based on FIFA ranking and match scores
+regression_data <- second_join %>% 
+  select(rank, home_score, away_score, Country)
+
+# Split the data into training and testing sets
+set.seed(123) # for reproducibility
+train_index <- sample(1:nrow(regression_data), 0.8 * nrow(regression_data))
+train_data <- regression_data[train_index, ]
+test_data <- regression_data[-train_index, ]
+
+# Prepare predictors and response variables
+X_train <- as.matrix(train_data[, -4]) # Exclude the 'winner' column
+y_train <- train_data$winner
+X_test <- as.matrix(test_data[, -4])
+y_test <- test_data$winner
+
+X_train <- na.omit(X_train)
+y_train <- na.omit(y_train)
+X_test <- na.omit(X_test)
+y_test <- na.omit(y_test)
+
+# Perform Lasso regression
+lasso_model <- cv.glmnet(X_train, y_train, alpha = 1)
+
+# Perform Ridge regression
+ridge_model <- cv.glmnet(X_train, y_train, alpha = 0)
+
+# Make predictions
+lasso_pred <- predict(lasso_model, newx = X_test)
+ridge_pred <- predict(ridge_model, newx = X_test)
+
+# Evaluate model performance
+lasso_mse <- mean((lasso_pred - y_test)^2)
+ridge_mse <- mean((ridge_pred - y_test)^2)
+
+# Compare mean squared errors
+print(paste("Lasso MSE:", lasso_mse))
+print(paste("Ridge MSE:", ridge_mse))
+
+
+```
+
 A description of the final model. Do not describe all the intermediate models that you have tried. Instead, present the model (or models) whose quantitative results you will show. These should be your most interesting models. Be as specific as you can while being concise. Readers should be able to reproduce a model similar enough to yours and obtain a similar performance.
 
 ## Baseline Model
