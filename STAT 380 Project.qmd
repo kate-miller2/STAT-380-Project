@@ -39,6 +39,9 @@ second_join <- left_join(first_join, data3, by = "Country")
 
 ## Illustration / Figure
 
+
+A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
+
 ```{r}
 library(dplyr)
 library(ggplot2)
