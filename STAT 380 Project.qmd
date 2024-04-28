@@ -7,7 +7,7 @@ editor: visual
 
 ## Introduction
 
-The Fifa World Cup is an international competition like no other. In 2022, 1.5 billion people tuned in to watch the games and 88,966 were there live in Qatar. With an event of this size, fans go all out in support of their favorite team(s), but how do we know who will end up as the champion? With this project, we will use machine learning and our knowledge of data science to answer this question. We plan to predict the outcome of the next men’s soccer World Cup (2026) by using the previous year’s team ranks from 1992 to 2023 and the outcomes of past games from 1930 to 2018.
+The FIFA World Cup is an international competition like no other. In 2022, 1.5 billion people tuned in to watch the games and 88,966 were there live in Qatar. With an event of this size, fans go all out in support of their favorite team(s), but how do we know who will end up as the champion? With this project, we will use machine learning and our knowledge of data science to answer this question. We plan to predict the outcome of the next men’s soccer World Cup (2026) by using the previous year’s team ranks from 1992 to 2023 and the outcomes of past games from 1930 to 2018.
 
 ## Exploratory Data Analysis
 
@@ -16,15 +16,18 @@ library(dplyr)
 library(tidyverse)
 library(readr)
 
+
+data_2014 <- read.csv("2014ranking.csv")
+
+data_2022 <- read.csv("2022ranking.csv")
+
+data2024 <- read.csv("2024ranking.csv")
+
 data1 <- read.csv("fifa_ranking-2023-07-20.csv")
 
 data2 <- read.csv("worldcups.csv")
 
 data3 <- read.csv("wcmatches.csv")
-
-# Use columns from data 3: Home score and away score
-# Use columns from data 1: Rank
-# Add these columns to data 2
 
 names(data1)[names(data1) == "country_full"] <- "Country"
 names(data2)[names(data2) == "winner"] <- "Country"
@@ -34,11 +37,19 @@ first_join <- left_join(data2, data1, by = "Country")
 
 second_join <- left_join(first_join, data3, by = "Country")
 
+df <- second_join
+
+df <- second_join %>%
+  select(-win_conditions) %>%
+  select(-country) %>%
+  na.omit() 
+
+new_df <- df[, c("Country", "rank", "year.x")]
+
 
 ```
 
 ## Illustration / Figure
-
 
 A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
 
@@ -97,12 +108,28 @@ ggplot(brazil_rank, aes(x = year, y = total_points)) +
   theme_minimal()
 
 ```
+```{R}
 
+library(ggplot2)
+
+# Create a data frame with the count of wins for home and away teams
+win_counts <- df %>%
+  mutate(home_team_win = ifelse(outcome == "H", "Home Team", "Away Team")) %>%
+  group_by(home_team_win) %>%
+  summarise(count = n())
+
+# Plot the bar plot
+ggplot(win_counts, aes(x = home_team_win, y = count, fill = home_team_win)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Winning Team", y = "Count of Wins", fill = "Winning Team") +
+  ggtitle("Distribution of Wins between Home and Away Teams") +
+  theme_minimal() 
+```
 ## Background & Related Work (2 points)
 
-With an event as big as the Fifa World Cup, many people have tried to determine who will win the next Cup for years. People will develop brackets and make bets with their friends, or for money, about who will win it all. Many times people simply go off their intuition but those with experience in data science and machine learning have gone on to develop models similar to ours to predict the next winning team. Each model utilizes different datasets and features to determine who will win the upcoming cup as well as different programming languages and visualizations to produce and showcase their work.
+With an event as big as the FIFA World Cup, many people have tried to determine who will win the next Cup for years. People will develop brackets and make bets with their friends, or for money, about who will win it all. Many times people simply go off their intuition but those with experience in data science and machine learning have gone on to develop models similar to ours to predict the next winning team. Each model utilizes different data sets and features to determine who will win the upcoming cup as well as different programming languages and visualizations to produce and showcase their work.
 
-For example, from ProjectPro there is an article depicting ways machine learning was utilized in Fifa 2022 and includes a project which tries to predict the outcome of the 2022 games using the results from 1870 to 2018. The article sets up a competition through Kaggle where teams or individuals can compete to produce the best model for predicting the winning teams. This is similar to what we wish to do in this project although we will be using different data sets and doing our work using R instead of Python like the competition suggests. Another example of similar work is outlined in a Medium article about predicting the 2022 Fifa World Cup. The article goes into which features they found to be important in predicting the next winner and trying to simulate the results. Once the features from their datasets were found, they were used to create different machine-learning models that take in team aspects to determine whether or not they could win the World Cup. Our project will be similar to this one as well but will use different data and work to predict the final winner of the competition based on existing teams.
+For example, from ProjectPro there is an article depicting ways machine learning was utilized in FIFA 2022 and includes a project which tries to predict the outcome of the 2022 games using the results from 1870 to 2018. The article sets up a competition through Kaggle where teams or individuals can compete to produce the best model for predicting the winning teams. This is similar to what we wish to do in this project although we will be using different data sets and doing our work using R instead of Python like the competition suggests. Another example of similar work is outlined in a Medium article about predicting the 2022 Fifa World Cup. The article goes into which features they found to be important in predicting the next winner and trying to simulate the results. Once the features from their datasets were found, they were used to create different machine-learning models that take in team aspects to determine whether or not they could win the World Cup. Our project will be similar to this one as well but will use different data and work to predict the final winner of the competition based on existing teams.
 
 Overall, there are other projects out there that attempt to accomplish the same goal as ours, meaning that it is possible. Although these projects exist, ours will differ in the data used and therefore also differ in which features are important for our particular models.
 
@@ -121,46 +148,69 @@ Describe the data that you have collected and cleaned. Be clear and specific whe
 ```{R, echo = FALSE, warning = FALSE}
 library(glmnet)
 
-# Prepare the data for regression
-# For simplicity, let's assume we're predicting World Cup wins based on FIFA ranking and match scores
-regression_data <- second_join %>% 
-  select(rank, home_score, away_score, Country)
+X <- new_df[, !(names(new_df) %in% c("Country"))]
+y <- new_df$rank
 
-# Split the data into training and testing sets
-set.seed(123) # for reproducibility
-train_index <- sample(1:nrow(regression_data), 0.8 * nrow(regression_data))
-train_data <- regression_data[train_index, ]
-test_data <- regression_data[-train_index, ]
+# Convert data to matrix format
+X_matrix <- as.matrix(X)
+y_vector <- as.vector(y)
 
-# Prepare predictors and response variables
-X_train <- as.matrix(train_data[, -4]) # Exclude the 'winner' column
-y_train <- train_data$winner
-X_test <- as.matrix(test_data[, -4])
-y_test <- test_data$winner
+# Lasso regression
+lasso_model <- cv.glmnet(x = X_matrix, y = y_vector, alpha = 1)
 
-X_train <- na.omit(X_train)
-y_train <- na.omit(y_train)
-X_test <- na.omit(X_test)
-y_test <- na.omit(y_test)
+# Extract MSE for Lasso model
+lasso_mse <- min(lasso_model$cvm)
 
-# Perform Lasso regression
-lasso_model <- cv.glmnet(X_train, y_train, alpha = 1)
+# Output MSE 
+print(paste("Mean Squared Error (Lasso):", lasso_mse))
+```
+```{R}
 
-# Perform Ridge regression
-ridge_model <- cv.glmnet(X_train, y_train, alpha = 0)
+# Ridge regression
+ridge_model <- cv.glmnet(x = X_matrix, y = y_vector, alpha = 0)
 
-# Make predictions
-lasso_pred <- predict(lasso_model, newx = X_test)
-ridge_pred <- predict(ridge_model, newx = X_test)
+# Extract MSE for Ridge model
+ridge_mse <- min(ridge_model$cvm)
 
-# Evaluate model performance
-lasso_mse <- mean((lasso_pred - y_test)^2)
-ridge_mse <- mean((ridge_pred - y_test)^2)
+print(paste("Mean Squared Error (Ridge):", ridge_mse))
+```
 
-# Compare mean squared errors
-print(paste("Lasso MSE:", lasso_mse))
-print(paste("Ridge MSE:", ridge_mse))
+```{R}
 
+rankings_2022 <- data_2022[, c("rank", "Name")]
+
+predictions <- predict(lasso_model, newx = as.matrix(rankings_2022))
+
+winner_index <- which.min(predictions)
+
+winner <- rankings_2022[winner_index, "Name"]
+
+print(paste("The predicted winner of the 2022 World Cup is:", winner))
+```
+```{R}
+
+rankings_2014 <- data_2014[, c("rank", "Name")]
+
+predictions <- predict(lasso_model, newx = as.matrix(rankings_2014))
+
+winner_index <- which.min(predictions)
+
+winner <- rankings_2014[winner_index, "Name"]
+
+print(paste("The predicted winner of the 2014 World Cup is:", winner))
+
+```
+```{R}
+
+rankings_2026 <- data_2024[, c("rank", "Name")]
+
+predictions <- predict(lasso_model, newx = as.matrix(rankings_2026))
+
+winner_index <- which.min(predictions)
+
+winner <- rankings_2026[winner_index, "Name"]
+
+print(paste("The predicted winner of the 2026 World Cup is:", winner))
 
 ```
 
@@ -169,6 +219,18 @@ A description of the final model. Do not describe all the intermediate models th
 ## Baseline Model
 
 Describe a simple, baseline model that you will compare your neural network against. This can be a simple model that you build.
+
+```{R}
+lm_model <- lm(rank ~ Country, data = new_df)
+
+predicted_rankings <- predict(lm_model)
+
+mse <- mean((new_df$rank - predicted_rankings)^2)
+
+summary(lm_model)
+mse
+
+```
 
 ## Quantitative Results
 
