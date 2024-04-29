@@ -1,5 +1,8 @@
 ---
-title: "Predicting the Winner of the 2026 Men's FIFA World Cup"
+title: "FIFA World Cup Predictions: Utilizing Machine Learning to Determine the Accuracy of the Rank of Teams on World Cup Winners"
+execute:
+  echo: false
+  warning: false
 author: "Diana Batista Capellan, Kate Miller, Isabel Sumy"
 format: pdf
 editor: visual
@@ -7,11 +10,42 @@ editor: visual
 
 ## Introduction
 
-The FIFA World Cup is an international competition like no other. In 2022, 1.5 billion people tuned in to watch the games and 88,966 were there live in Qatar. With an event of this size, fans go all out in support of their favorite team(s), but how do we know who will end up as the champion? With this project, we will use machine learning and our knowledge of data science to answer this question. We plan to predict the outcome of the next men’s soccer World Cup (2026) by using the previous year’s team ranks from 1992 to 2023 and the outcomes of past games from 1930 to 2018.
+The FIFA World Cup is an international competition like no other. In 2022, 1.5 billion people tuned in to watch the games and 88,966 were there live in Qatar. With an event of this size, fans go all out in support of their favorite team(s), but how can one know who will end up as the champion? This project will use machine learning and knowledge of data science to evaluate whether initial ranking of teams in the World Cup accurately predicts which team will win. 
 
-## Exploratory Data Analysis
+This project plans to predict the outcome of the next men's FIFA World Cup (2026) by using the previous year’s team ranks from 1992 to 2023 and the outcomes of past games from 1930 to 2018, as well as evaluate the effectiveness of a machine learning model by testing on previous years' World Cups. 
 
-```{R, echo = TRUE, warning = FALSE}
+Machine learning is a practical approach to this because there is a large amount of data and machine learning is able to make complex predictions between variables in the data, as well as provide interpretations to the predictions of the data. 
+
+## Illustration / Figure
+
+
+## Background and Related Work
+
+With an event as large as the FIFA World Cup, many individuals have tried to determine who will win the next Cup for years. Individuals will develop brackets to attempt to predict who will win it all. Many times, people simply have gone off their intuition. However, those with experience in data science and machine learning have gone on to develop models similar to this one to predict the next winning team. Each model utilizes different data sets and features to determine who will win the upcoming cup as well as different programming languages and visualizations to produce and showcase their work.
+
+For example, there is a ProjectPro article depicting ways machine learning was utilized in FIFA 2022 and includes a project that tried to predict the outcome of the 2022 games using the results from 1870 to 2018 [1]. The article sets up a competition through Kaggle where teams or individuals can compete to produce the best model for predicting the winning teams. This is similar to what this project hopes to accomplish, though it will use different data sets and use the R programming language instead of Python.
+
+Another example of similar work is outlined in a Medium article about predicting the 2022 FIFA World Cup [2]. The article goes into which features individuals found to be important in predicting the next winner and trying to simulate the results. Once the features were found, they were used to create different machine-learning models that analyze different team statistics to determine whether or not they could win the World Cup. This project will be similar to this idea as well but will use different data and work to predict the final winner of the competition solely based on the rank of the teams instead of multiple features. 
+	
+Overall, there are many projects published that attempt to accomplish the same goal as this project. Although these projects exist, this specific project will differ in the data used to train the machine learning model and also differ in analyzing the most important features for the model. 
+
+## Data Processing
+
+#### About the Data
+
+The collected data comes from three distinct sources for the exploratory data analysis seen below. 
+
+1. FIFA ranking data as of July 20, 2023 was acquired from a CSV file named `fifa_ranking-2023-07-20.csv` [3]. This dataset contains information about FIFA rankings for various countries, including the country name and its corresponding rank. 
+
+2. Data from FIFA World Cups was obtained from a CSV file named `worldcups.csv` [4]. This dataset encompasses details about different World Cup tournaments, such as the year, host country, winning team, runner-up, and other pertinent information. 
+
+3. Data on World Cup matches was sourced from a file named `wcmatches.csv` [5]. This dataset contains comprehensive information about matches played during FIFA World Cup tournaments, including the year, stage, participating teams, and match scores.
+
+For the model used in the project, creation of `Excel csv` files was necessary. These three datasets were created by members of this project to analyze 2014, 2022, and 2024 men's FIFA team rankings. The datasets have two columns, `rank` and `Name`, where `Name` refers to the name of the country participating in FIFA. The data for these `csv` files was obtained from the FIFA website [6]. To maintain accessability and reproducibility of this project, these data sets are available for viewing on GitHub and are linked in the `References` section at the end of this document. The model will be discussed in more detail later in this document. 
+
+Necessary packages for this project: `dplyr`, `tidyverse`, `readr`, `glmnet`, and `ggplot2`. 
+
+```{R}
 library(dplyr)
 library(tidyverse)
 library(readr)
@@ -21,7 +55,7 @@ data_2014 <- read.csv("2014ranking.csv")
 
 data_2022 <- read.csv("2022ranking.csv")
 
-data2024 <- read.csv("2024ranking.csv")
+data_2024 <- read.csv("2024ranking.csv")
 
 data1 <- read.csv("fifa_ranking-2023-07-20.csv")
 
@@ -48,10 +82,35 @@ new_df <- df[, c("Country", "rank", "year.x")]
 
 
 ```
+#### Data Cleaning
 
-## Illustration / Figure
+To ensure consistency and the facilitation of data integration, several cleaning and formatting steps were performed. The column names across all datasets were standardized by renaming the column for the winner of the World Cup to `Country`. Specifically, in the FIFA ranking data (`data1`), the column was renamed from `country_full` to `Country`. Similarly, in the World Cup data (`data2`), the column was renamed from `winner` to `Country`, and in the World Cup matches data (`data3`), the column was renamed from `winning_team` to `Country`. This uniform naming convention streamlines the subsequent data integration process.
 
-A figure or a diagram that illustrates the overall model or idea of your project. The idea is to make your report more accessible, especially to readers who are starting by skimming your work. For the project, taking a picture of a hand-drawn diagram is fine, as long as it's legible. PowerPoint is another option. You will not be penalized for hand-drawn illustrations -- you are graded on the design and illustrative power
+Following the standardization of column names, the datasets were integrated through left joins based on the `Country` column. First, the World Cup data (`data2`) was merged with the FIFA ranking data (`data1`). The resultant dataset was merged with the World Cup matches data (`data3`). These sequential left joins to create the `df` dataframe enriched the World Cup data with FIFA rankings and match details, which facilitated effective Exploratory Data Analysis. To further clean the data, NA values, the `win_conditions` column, and the `country` column (a repeated column from `data2`) were all removed.
+
+In order to properly train the machine learning model and be able to use it for future predictions, the creation of a new dataframe, `new_df`, was necessary. This new dataframe was created from the original `df` dataframe with the `rank`, `Country`, and `year.x` columns.
+
+The `df` combined dataframe:
+```{R}
+head(df)
+```
+
+The `new_df` dataframe used for the model"
+```{R}
+head(new_df)
+```
+
+#### Statistics
+
+Summary statistics for the `df` dataframe:
+
+```{R}
+summary(df)
+```
+
+#### Data Visualizations
+
+Three visualizations were created to help a general audience better understand the data used for this project. The visualizations utilize the `ggplot2` package.
 
 ```{r}
 library(dplyr)
@@ -84,6 +143,7 @@ ggplot(world_cup_wins, aes(x = reorder(Country, Wins), y = Wins)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+The data visualization shows that Brazil has won the most World Cups throughout history.
 
 ```{r}
 library(dplyr)
@@ -108,6 +168,8 @@ ggplot(brazil_rank, aes(x = year, y = total_points)) +
   theme_minimal()
 
 ```
+Since Brazil has the most number of World Cup wins, the second visualization aims to show Brazil's ranking over time, which could be beneficial to the overall interpretation of the machine learning model's goal to show prediction of winners based on their ranking. 
+
 ```{R}
 
 library(ggplot2)
@@ -125,27 +187,19 @@ ggplot(win_counts, aes(x = home_team_win, y = count, fill = home_team_win)) +
   ggtitle("Distribution of Wins between Home and Away Teams") +
   theme_minimal() 
 ```
-## Background & Related Work (2 points)
-
-With an event as big as the FIFA World Cup, many people have tried to determine who will win the next Cup for years. People will develop brackets and make bets with their friends, or for money, about who will win it all. Many times people simply go off their intuition but those with experience in data science and machine learning have gone on to develop models similar to ours to predict the next winning team. Each model utilizes different data sets and features to determine who will win the upcoming cup as well as different programming languages and visualizations to produce and showcase their work.
-
-For example, from ProjectPro there is an article depicting ways machine learning was utilized in FIFA 2022 and includes a project which tries to predict the outcome of the 2022 games using the results from 1870 to 2018. The article sets up a competition through Kaggle where teams or individuals can compete to produce the best model for predicting the winning teams. This is similar to what we wish to do in this project although we will be using different data sets and doing our work using R instead of Python like the competition suggests. Another example of similar work is outlined in a Medium article about predicting the 2022 Fifa World Cup. The article goes into which features they found to be important in predicting the next winner and trying to simulate the results. Once the features from their datasets were found, they were used to create different machine-learning models that take in team aspects to determine whether or not they could win the World Cup. Our project will be similar to this one as well but will use different data and work to predict the final winner of the competition based on existing teams.
-
-Overall, there are other projects out there that attempt to accomplish the same goal as ours, meaning that it is possible. Although these projects exist, ours will differ in the data used and therefore also differ in which features are important for our particular models.
-
-## Data Processing
-
-Describe the data that you have collected and cleaned. Be clear and specific when describing what you've done, so that a classmate can reproduce your work. Show some statistics and examples of your data.
-
--   4/4 Clearly describes sources of data, and the steps you took to clean and format your data. Statistics and data example are well-chosen, and gives readers a "feel" for your data.
--   3/4 Mostly clear description, but some aspects of the data processing steps are vague. Statistics and data example are somewhat illustrative/helpful.
--   2/4 Vague description or missing key information about where your data comes from or what you did. No example data shown, or the ones shown are not illustrative.
--   1/4 Incomplete information.
+Another factor that could contribute to the model is a home team advantage. This visual aims to show that there may be a home team advantage, since the home team has won more often than the away team. One would expect the performance to be half and half if there was no correlation between the home team and the result of the match.
 
 ## Architecture
 
+The final model used for this project was the LASSO model. Experimentation took place to determine which model would be a better predictor for World Cup winner based on ranking, and the LASSO model had a lower mean square error than the ridge model, as seen below and described in detail in the next section. 
 
-```{R, echo = FALSE, warning = FALSE}
+To create the LASSO model, the `glmnet` package was utilized. The `X` variable was created from the `new_df` dataframe and selected the `Country` column. the `y` variable was created from the `rank` column in `new_df`. Next, the X variable was converted to a matrix, and the y variable was converted to a vector to complete LASSO regression. Each of these were stored in a new variable, called `X_matrix` and `y_vector`, respectively. Next, the LASSO model was created utilizing `cv.glmnet` and using `X_matrix` and `y_vector`, with an alpha value of 1. This means that some of the coefficients are shrunk to zero and only the most important coefficients are selected. The mean square error from the model was extracted using the `cvm` column of the model and finding the minimum of that column. 
+
+To create a ridge model, one would perform the same steps as for the LASSO model but instead use an alpha value of 0, which only minimizes the sum of squared residuals. The mean square error was also extracted from the ridge model, but it was higher than that of the LASSO model, making the LASSO model the best performing model in this scenario.
+
+A standard plot was created to visualize the LASSO model.
+
+```{R}
 library(glmnet)
 
 X <- new_df[, !(names(new_df) %in% c("Country"))]
@@ -164,8 +218,8 @@ lasso_mse <- min(lasso_model$cvm)
 # Output MSE 
 print(paste("Mean Squared Error (Lasso):", lasso_mse))
 ```
-```{R}
 
+```{R}
 # Ridge regression
 ridge_model <- cv.glmnet(x = X_matrix, y = y_vector, alpha = 0)
 
@@ -176,17 +230,39 @@ print(paste("Mean Squared Error (Ridge):", ridge_mse))
 ```
 
 ```{R}
-
-rankings_2022 <- data_2022[, c("rank", "Name")]
-
-predictions <- predict(lasso_model, newx = as.matrix(rankings_2022))
-
-winner_index <- which.min(predictions)
-
-winner <- rankings_2022[winner_index, "Name"]
-
-print(paste("The predicted winner of the 2022 World Cup is:", winner))
+plot(lasso_model, main = "LASSO Model", xlab = "Log(lambda)", ylab = "Coefficients")
 ```
+
+## Baseline Model
+
+For a baseline model, a simple linear regression model was fit to the new dataframe `new_df`  with `rank` and `Country` variables to predict which team will win the next World Cup. Linear regression minimizes the mean of the squared differences of the predicted and observed values. A drawback of this method is that overfitting can occur since linear regression does not impose any penalties on the coefficients. This is shown through this model's outputted mean square error (MSE) of 28.34 (rounded value), which is extremely high in this context. In order to decrease the MSE, other model types that used different strategies to decrease overfitting and multicollinearity were attempted, and the LASSO model was ultimately the best-performing model.
+
+
+```{R}
+lm_model <- lm(rank ~ Country, data = new_df)
+
+predicted_rankings <- predict(lm_model)
+
+mse <- mean((new_df$rank - predicted_rankings)^2)
+
+```
+
+## Quantitative Results
+
+The main quantitative result used to measure and compare models is the mean squared error (MSE). The MSE is a commonly used measure to determine the effectiveness of a model and is calculated by taking the mean of the squared differences between the predicted and actual values. Since MSE is a quantitative measure, it can be used to objectively compare the performance of different regression models, as well as the specific performance of a single model. 
+
+MSE at its base is the difference between the actual and predicted values, so a lower MSE indicates that the predicted values are closer to the actual values. Contrarily, a higher MSE indicates that the predicted values are further from the actual values. In this way, models with lower MSEs usually have better performance than models with higher MSEs, which makes this measure a good representation of model quality in comparison situations. 
+
+Overall, mean square error is a helpful tool when determining the effectiveness of a regression model, and is an important comparison technique used in this project.
+
+The mean square error for the LASSO model used in this project was 0.0408, which is a very low MSE. This means that the LASSO model was a good measure of whether ranking impacted the country that won the World Cup. This MSE shows that most teams who won the World Cup were ranked #1 going into it. Of course, there were still teams who won the World Cup who were ranked lower going into the World Cup. The mean square error for the Ridge model was 0.409, which is a slightly higher MSE than the LASSO model. It was ultimately determined to use the LASSO model to predict team performance in the World Cup in the future since it was the model with the lower MSE.
+
+
+
+## Qualitative Results
+
+To determine the overall performance of the LASSO model, different years' World Cup ranking data were used. The predicted winners for 2014, 2022, and 2026 were predicted using the LASSO model, which was trained with the data of World Cup rankings and their winners from up until 2018. Though one of the datasets had data up until 2023, this is not included in the final model. The output of the predictions for these three years are shown below. The predictions were calculated using the base-R function `predict` and selecting the `rank` and `Name` columns from the specific year's dataset. Lastly, the minimum was selected from the rankings, since the minimum value would be the team that would be the LASSO model's prediction for winning the World Cup.
+
 ```{R}
 
 rankings_2014 <- data_2014[, c("rank", "Name")]
@@ -200,6 +276,21 @@ winner <- rankings_2014[winner_index, "Name"]
 print(paste("The predicted winner of the 2014 World Cup is:", winner))
 
 ```
+
+```{R}
+
+rankings_2022 <- data_2022[, c("rank", "Name")]
+
+predictions <- predict(lasso_model, newx = as.matrix(rankings_2022))
+
+winner_index <- which.min(predictions)
+
+winner <- rankings_2022[winner_index, "Name"]
+
+print(paste("The predicted winner of the 2022 World Cup is:", winner))
+
+```
+
 ```{R}
 
 rankings_2026 <- data_2024[, c("rank", "Name")]
@@ -214,42 +305,45 @@ print(paste("The predicted winner of the 2026 World Cup is:", winner))
 
 ```
 
-A description of the final model. Do not describe all the intermediate models that you have tried. Instead, present the model (or models) whose quantitative results you will show. These should be your most interesting models. Be as specific as you can while being concise. Readers should be able to reproduce a model similar enough to yours and obtain a similar performance.
+The 2014 World Cup prediction was correct based on rank, since Germany did in fact win that World Cup. The 2022 rankings were not included in the original data, so this project aimed to evaluate the winner of the World Cup. Brazil was first ranked heading into the World Cup, but Argentina took the win against France, so Brazil wasn't even present in the final match. This is an example where the model might not work entirely to performance. The overall low mean square error of the model signifies that the majority of the time, the team that has been ranked first heading into the World Cup will win the World Cup, making the predictions of the model favor those who are ranked higher, since their success has been seen over time. 
 
-## Baseline Model
+Lastly, the 2026 predicted winner is Argentina. This is not guaranteed, since the data used is from 2024, and there are still two more years until the World Cup. The ranking could change in these two years, so to gain an accurate prediction, inputting the dataset with updated data in 2026 into the LASSO model could be beneficial.
 
-Describe a simple, baseline model that you will compare your neural network against. This can be a simple model that you build.
-
-```{R}
-lm_model <- lm(rank ~ Country, data = new_df)
-
-predicted_rankings <- predict(lm_model)
-
-mse <- mean((new_df$rank - predicted_rankings)^2)
-
-summary(lm_model)
-mse
-
-```
-
-## Quantitative Results
-
-A description of the quantitative measures of your result. What measurements can you use to illustrate how your model performs?
-
-## Qualitative Results
-
-Include some sample outputs of your model, to help your readers better understand what your model can do. The qualitative results should also put your quantitative results into context (e.g. Why did your model perform well? Is there a type of input that the model does not do well on?)
 
 ## Discussion
 
-Discuss your results. Do you think your model is performing well? Why or why not? What is unusual, surprising, or interesting about your results? What did you learn?
+Overall, the project is performing at a subjectively mediocre performance. There was an accurate prediction for the future winners of the World Cup, but there was also an inaccurate prediction. The model in terms of ranking may need other predictors or factors, such as how well the team is performing as a whole, to determine the winner. However, that information is outside the scope of this particular project.
+
+Something that is interesting about the results is that the model will usually choose the top ranked team to win the World Cup. This is interesting because in 2022, Brazil, the top ranked team, did not win and was not even in the final match, which was unexpected.
+
+Our group learned how to clean a dataset and how to combine datasets to provide additional understanding of the data prior to building a machine learning model. We also learned how to communicate the difference between mean square errors of the different models to determine which would perform the best with the given data. Lastly, we learned that the model will not always be correct in predicting the output or more importantly the next winner of the World Cup, since the model is only based on rank.
+
 
 ## Ethical Considerations
 
-Description of a use of the system that could give rise to ethical issues. Are there limitations of your model? Your training data?
+The World Cup prediction model faces potential biases and limitations that warrant consideration. One concern is fairness, as the historical data used might favor certain teams or regions, leading to unfair predictions that disadvantage others.
 
-(Note that the expectations are higher here than in the project proposal.)
+Another challenge is that the model relies on historical data, which might not fully reflect how the game has changed over time. For example, it might not account for new strategies or changes in player performance. Also, sports outcomes are uncertain, with factors like injuries and referee decisions making it hard to predict results accurately. Ranking might not be the only thing at play here, and the determination of each country's ranking may not take into account these other factors.
 
-## Conclusion(Optional)
+A specific limitation of the model itself is that it is limited to predicting the winner solely on rank. This project acknowledges that there may be more data necessary to determining the winner of the World Cup, such as team performance, total points, and historical performance in World Cup finals. In terms of limitations of the training data, there were multiple teams who were not ranked first in the training data who won the World Cup, which was not reflected in the predictions of the model.
 
-Summarize the whole report.
+
+## Conclusion
+
+In conclusion, the LASSO model worked well to determine if rank is a good predictor of the overall winner of the World Cup, and the model accurately predicted the result of the 2014 winner based on the ranking of teams before heading into the World Cup playoffs. This model can be used in the future to hopefully predict the correct outcome of future World Cups based on ranking.
+
+
+## References
+
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+
+GitHub link for downloadable `csv` files for 2014, 2022, and 2024 (used for 2026 predictions) team rankings:
+
+
+
+## Code Appendix
