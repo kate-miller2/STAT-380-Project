@@ -41,7 +41,7 @@ The collected data comes from three distinct sources for the exploratory data an
 
 3. Data on World Cup matches was sourced from a file named `wcmatches.csv` [5]. This dataset contains comprehensive information about matches played during FIFA World Cup tournaments, including the year, stage, participating teams, and match scores.
 
-For the model used in the project, creation of `Excel csv` files was necessary. These three datasets were created by members of this project to analyze 2014, 2022, and 2024 men's FIFA team rankings. The datasets have two columns, `rank` and `Name`, where `Name` refers to the name of the country participating in FIFA. The data for these `csv` files was obtained from the FIFA website [6]. To maintain accessability and reproducibility of this project, these data sets are available for viewing on GitHub and are linked in the `References` section at the end of this document. The model will be discussed in more detail later in this document. 
+For the model used in the project, creation of `Excel csv` files was necessary. These three datasets were created by members of this project to analyze 2014, 2022, and 2024 men's FIFA team rankings. The datasets have two columns, `rank` and `Name`, where `Name` refers to the name of the country participating in FIFA. The data for these `csv` files was obtained from the FIFA website (also source 4). To maintain accessability and reproducibility of this project, these data sets are available for viewing on GitHub and are linked in the `References` section at the end of this document. The model will be discussed in more detail later in this document. 
 
 Necessary packages for this project: `dplyr`, `tidyverse`, `readr`, `glmnet`, and `ggplot2`. 
 
@@ -335,15 +335,11 @@ In conclusion, the LASSO model worked well to determine if rank is a good predic
 
 ## References
 
-[1]
-[2]
-[3]
-[4]
-[5]
-[6]
+[1] ProjectPro. “How Machine Learning Is Being Leveraged in FIFA 2022?,” n.d. https://www.projectpro.io/article/how-machine-learning-is-being-leveraged-in-fifa/694.
+[2] Pessoa, Sergio. “Predicting FIFA 2022 World Cup with Machine Learning.” LatinXinAI, December 21, 2022. https://medium.com/latinxinai/predicting-fifa-2022-world-cup-with-machine-learning-640f1d2d7e98.
+[3] www.kaggle.com. “FIFA World Ranking 1992-2023.” Accessed April 29, 2024. https://www.kaggle.com/datasets/cashncarry/fifaworldranking.
+[4] inside.fifa.com. “Men’s Ranking.” Accessed April 29, 2024. https://inside.fifa.com/fifa-world-ranking/men?dateId=id14289.
+[5] www.kaggle.com. “FIFA World Cup.” Accessed April 29, 2024. https://www.kaggle.com/datasets/evangower/fifa-world-cup.
 
 GitHub link for downloadable `csv` files for 2014, 2022, and 2024 (used for 2026 predictions) team rankings:
 
-
-
-## Code Appendix
